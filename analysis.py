@@ -75,3 +75,24 @@ plt.show()
 df["cluster"] = y_km + 1
 print(df.groupby("cluster")[["age", "repeat_song_rate_%"]].mean())
 print(df.groupby("cluster")[["age", "repeat_song_rate_%"]].std())
+
+# Rozkład wieku użytkowników
+plt.figure(figsize=(8,5))
+sns.histplot(df["age"], bins=20, kde=True, color="blue")
+plt.xlabel("Wiek użytkowników")
+plt.ylabel("Liczba użytkowników")
+plt.title("Rozkład wieku użytkowników")
+plt.show()
+
+# Liczba użytkowników w poszczególnych krajach
+top_10_countries=df["country"].value_counts().head(10)
+plt.figure(figsize=(19,10))
+plt.bar(top_10_countries.index, top_10_countries.values, color="orange")
+plt.xlabel("Kraj", fontsize=17)
+plt.ylabel("Liczba użytkowników", fontsize=17)
+plt.title("Top 10 krajów z największą liczbą użytkowników", fontsize=20)
+plt.xticks(rotation=45, fontsize=15)
+plt.yticks(fontsize=15)
+plt.ylim(0,700)
+plt.tight_layout()
+plt.show()
