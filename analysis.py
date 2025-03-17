@@ -2,7 +2,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.cluster import KMeans
-from sklearn.preprocessing import StandardScaler
 
 # Wczytywanie danych
 df = pd.read_csv(r"C:\Users\wmusi\OneDrive\Pulpit\global_music_data\Global_Music_Streaming_Listener_Preferences.csv")
@@ -23,6 +22,12 @@ print(df.head(3))
 df.info()
 missing_values = df.isnull().sum()
 print(f"missing_values: \n{missing_values}")
+
+# Test Spearmana-nieliniowe zależności
+spearman_corr= df[["age", "number_of_songs_liked"]].corr(method="spearman")
+plt.figure(figsize=(10, 6))
+sns.heatmap(spearman_corr, annot= True, cmap="coolwarm", fmt=".2f")
+plt.show()
 
 # Klasteryzacja K-Means
 X = df[["age", "repeat_song_rate_%"]].values
@@ -77,7 +82,7 @@ print(df.groupby("cluster")[["age", "repeat_song_rate_%"]].mean())
 print(df.groupby("cluster")[["age", "repeat_song_rate_%"]].std())
 
 # Rozkład wieku użytkowników
-plt.figure(figsize=(8,5))
+plt.figure(figsize=(8, 5))
 sns.histplot(df["age"], bins=20, kde=True, color="blue")
 plt.xlabel("Wiek użytkowników")
 plt.ylabel("Liczba użytkowników")
@@ -87,12 +92,29 @@ plt.show()
 # Liczba użytkowników w poszczególnych krajach
 top_10_countries=df["country"].value_counts().head(10)
 plt.figure(figsize=(19,10))
-plt.bar(top_10_countries.index, top_10_countries.values, color="orange")
+plt.bar(top_10_countries.index, top_10_countries.values, color="orange", width=0.5)
 plt.xlabel("Kraj", fontsize=17)
 plt.ylabel("Liczba użytkowników", fontsize=17)
 plt.title("Top 10 krajów z największą liczbą użytkowników", fontsize=20)
 plt.xticks(rotation=45, fontsize=15)
 plt.yticks(fontsize=15)
-plt.ylim(0,700)
+plt.ylim(0, 700)
+plt.tight_layout()
+plt.show()
+
+# Histogramy dla różnych zmiennych
+columns_to_hist = ["age", "minutes_streamed_per_day", "number_of_songs_liked",
+                   "listening_time", "repeat_song_rate_%", "discover_weekly_engagement_%"]
+plt.figure(figsize=(12, 8))
+for i, col in enumerate(columns_to_hist, 1):
+    plt.subplot(2, 3, i)
+    plt.hist(df[col], bins=10, edgecolor="black", alpha=0.7, color="royalblue")
+    plt.title(col.replace("_", " ").capitalize(), fontweight="bold")
+    plt.xlabel(col.replace("_", " ").capitalize())
+    plt.ylabel("Liczba użytkowników")
+    if col == "listening_time":
+        plt.ylim(0,1650)
+    else:
+        plt.ylim(0, 550)
 plt.tight_layout()
 plt.show()
